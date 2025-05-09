@@ -5,10 +5,9 @@ dotenv.config({ path: '../.env' });
 
 async function main() {
   console.log('Deploying DoNotBuy Contract...');
- 
-  const routerAddress = '0x610D2f07b7EdC67565160F587F37636194C34E74'; // Replace with correct address  0x62C0BBfC20F7e2cBCa6b64f5035c8f7fabc1806E
-  const usdcAddress = '0x176211869cA2b568f2A7D4EE941E073a821EE1ff'; // Replace with correct or mock USDC address 0x885c07e77F18cb0FDBB1bb34F16d83945aa11c04
 
+  const routerAddress = '0x62C0BBfC20F7e2cBCa6b64f5035c8f7fabc1806E'; // Lynex Router (verify this)
+  const usdcAddress = '0x176211869cA2b568f2A7D4EE941E073a821EE1ff'; // Circle USDC on Linea
 
   if (!ethers.isAddress(routerAddress)) {
     throw new Error('Invalid routerAddress');
@@ -18,22 +17,34 @@ async function main() {
   }
 
   try {
-    const DoNotBuy = await ethers.deployContract('DoNotBuy', [routerAddress, usdcAddress], { gasLimit: 5000000 });
+    const [deployer] = await ethers.getSigners();
+    console.log('Deploying from:', deployer.address);
+
+    const DoNotBuy = await ethers.deployContract('DoNotBuy', [routerAddress, usdcAddress], {
+      gasLimit: 5000000,
+      gasPrice: ethers.parseUnits('0.1', 'gwei') // Adjust based on Linea Mainnet
+    });
+
+    console.log('Waiting for deployment...');
     await DoNotBuy.waitForDeployment();
     const DoNotBuyAddress = await DoNotBuy.getAddress();
     console.log(`DoNotBuy deployed at: ${DoNotBuyAddress}`);
 
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    console.log('Waiting for verification...');
+    await new Promise((resolve) => setTimeout(resolve, 10000)); // Increased delay
 
     await run('verify:verify', {
       address: DoNotBuyAddress,
       constructorArguments: [routerAddress, usdcAddress],
     });
-    console.log('BankOfLinea verified!');
+    console.log('DoNotBuy verified!');
   } catch (error) {
     console.error('Deployment failed:', error);
     if (error.data) {
       console.error('Revert data:', error.data);
+    }
+    if (error.reason) {
+      console.error('Revert reason:', error.reason);
     }
     throw error;
   }

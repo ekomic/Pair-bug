@@ -158,39 +158,30 @@ contract DoNotBuy is IERC20Extended, Ownable, ReentrancyGuard {
     event ETHReceived(address indexed sender, uint256 amount);
 
     constructor(address routerAddress, address usdcAddress) Ownable(msg.sender) {
-        require(routerAddress != address(0), "Router cannot be zero address");
-        require(usdcAddress != address(0), "USDC cannot be zero address");
+    require(routerAddress != address(0), "Router cannot be zero address");
+    require(usdcAddress != address(0), "USDC cannot be zero address");
 
-        IRouter _router = IRouter(routerAddress);
-        router = _router;
-        // Fix: Create or retrieve the DNB/WETH pair
-        address _pair = IFactory(_router.factory()).getPair(address(this), _router.wETH(), false);
-        if (_pair == address(0)) {
-            _pair = IFactory(_router.factory()).createPair(address(this), _router.wETH(), false);
-        }
-        pair = _pair;
-        reward = usdcAddress;
-        rewardDecimals = 6;
-        require(rewardDecimals <= 18, "Invalid reward token decimals");
+    router = IRouter(routerAddress);
+    reward = usdcAddress;
+    rewardDecimals = 6;
+    require(rewardDecimals <= 18, "Invalid reward token decimals");
 
-        development_receiver = 0x0F245A7D374388CD76fC8139Dd900E9B02bF69d7;
-        marketing_receiver = 0x27DFbEC90EEa392446f71638b70193c6F558c001;
-        liquidity_receiver = 0xd53686b4298Ac78B1d182E95FeAC1A4DD1D780bD;
+    development_receiver = 0x0F245A7D374388CD76fC8139Dd900E9B02bF69d7;
+    marketing_receiver = 0x27DFbEC90EEa392446f71638b70193c6F558c001;
+    liquidity_receiver = 0xd53686b4298Ac78B1d182E95FeAC1A4DD1D780bD;
 
-        isFeeExempt[address(this)] = true;
-        isFeeExempt[development_receiver] = true;
-        isFeeExempt[liquidity_receiver] = true;
-        isFeeExempt[marketing_receiver] = true;
-        isFeeExempt[msg.sender] = true;
-        isDividendExempt[address(pair)] = true;
-        isDividendExempt[address(msg.sender)] = true;
-        isDividendExempt[address(this)] = true;
-        isDividendExempt[address(DEAD)] = true;
-        isDividendExempt[address(0)] = true;
+    isFeeExempt[address(this)] = true;
+    isFeeExempt[development_receiver] = true;
+    isFeeExempt[liquidity_receiver] = true;
+    isFeeExempt[marketing_receiver] = true;
+    isFeeExempt[msg.sender] = true;
+    isDividendExempt[address(this)] = true;
+    isDividendExempt[address(DEAD)] = true;
+    isDividendExempt[address(0)] = true;
 
-        _balances[msg.sender] = _totalSupply;
-        emit Transfer(address(0), msg.sender, _totalSupply);
-    }
+    _balances[msg.sender] = _totalSupply;
+    emit Transfer(address(0), msg.sender, _totalSupply);
+}
 
     function setReceiverAddresses(
         address _developmentReceiver,
@@ -230,15 +221,16 @@ contract DoNotBuy is IERC20Extended, Ownable, ReentrancyGuard {
         emit SlippageToleranceUpdated(_tolerance);
     }
 
-    function setRouter(address _routerAddress) external onlyOwner {
-        require(_routerAddress != address(0), "Router cannot be zero address");
-        router = IRouter(_routerAddress);
-        pair = IFactory(router.factory()).getPair(address(this), router.wETH(), false);
-        if (pair == address(0)) {
-            pair = IFactory(router.factory()).createPair(address(this), router.wETH(), false);
-        }
-        emit RouterUpdated(_routerAddress);
+   function setRouter(address _routerAddress) external onlyOwner {
+    require(_routerAddress != address(0), "Router cannot be zero address");
+    router = IRouter(_routerAddress);
+    pair = IFactory(router.factory()).getPair(address(this), router.wETH(), false);
+    if (pair == address(0)) {
+        pair = IFactory(router.factory()).createPair(address(this), router.wETH(), false);
     }
+    isDividendExempt[pair] = true; // Add exemption
+    emit RouterUpdated(_routerAddress);
+}
 
     function setReward(address _usdcAddress) external onlyOwner {
         require(_usdcAddress != address(0), "USDC cannot be zero address");
