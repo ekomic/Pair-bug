@@ -44,7 +44,7 @@ async function main() {
   // Add liquidity
   const routerContract = await ethers.getContractAt(
     [
-      "function addLiquidityETH(address token, uint amountTokenDesired, uint amountTokenMin, uint amountETHMin, address to, uint deadline) external payable returns (uint amountToken, uint amountETH, uint liquidity)"
+      "function addLiquidityETH(address token, bool stable, uint amountTokenDesired, uint amountTokenMin, uint amountETHMin, address to, uint deadline) external payable returns (uint amountToken, uint amountETH, uint liquidity)"
     ],
     routerAddress,
     signer
@@ -60,6 +60,7 @@ async function main() {
 
   const liquidityTx = await routerContract.addLiquidityETH(
     tokenAddress,
+    false,
     tokenAmount,
     amountTokenMin,
     amountETHMin,
