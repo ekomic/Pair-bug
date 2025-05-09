@@ -6,7 +6,7 @@ dotenv.config({ path: '../.env' });
 async function main() {
   console.log('Deploying DoNotBuy Contract...');
 
-  const routerAddress = '0x62C0BBfC20F7e2cBCa6b64f5035c8f7fabc1806E'; // Lynex Router (verify this)
+  const routerAddress = '0x610D2f07b7EdC67565160F587F37636194C34E74'; // Lynex Router (verify this)
   const usdcAddress = '0x176211869cA2b568f2A7D4EE941E073a821EE1ff'; // Circle USDC on Linea
 
   if (!ethers.isAddress(routerAddress)) {
