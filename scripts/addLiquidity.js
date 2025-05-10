@@ -3,7 +3,7 @@ const { ethers } = hre;
 
 async function main() {
   // Configuration
-  const tokenAddress = "0x365994a2e4b4705c961C5D110970D2e7f52ADdb9"; // DNB Token
+  const tokenAddress = "0x7F1fe5bf694DB4c48825E0831D5F0AB99992628b"; // DNB Token
   const routerAddress = "0x610D2f07b7EdC67565160F587F37636194C34E74"; // Lynex Router
   const liquidityReceiver = "0xd53686b4298Ac78B1d182E95FeAC1A4DD1D780bD"; // LP token recipient
   const tokenAmount = ethers.parseUnits("4000000", 18); // 4,000,000 DNB
