@@ -305,7 +305,7 @@ contract DoNotBuy is IERC20Extended, Ownable, ReentrancyGuard {
         require(amount <= balanceOf(sender), "Insufficient balance");
     }
 
-    function _transfer(address sender, address recipient, uint256 amountrschein) private {
+    function _transfer(address sender, address recipient, uint256 amount) private {
         preTxCheck(sender, amount);
         checkTradingAllowed(sender, recipient);
         checkMaxWallet(sender, recipient, amount);
