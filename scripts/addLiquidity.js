@@ -64,7 +64,7 @@ async function main() {
     tokenAmount,
     amountTokenMin,
     amountETHMin,
-    signer.address, // LP tokens to liquidity_receiver
+    liquidityReceiver, // LP tokens to liquidity_receiver
     deadline,
     { value: ethAmount, gasLimit: 200000 }
   );
