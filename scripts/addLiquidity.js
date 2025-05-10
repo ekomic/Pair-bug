@@ -66,7 +66,7 @@ async function main() {
     amountETHMin,
     liquidityReceiver, // LP tokens to liquidity_receiver
     deadline,
-    { value: ethAmount, gasLimit: 200000 }
+    { value: ethAmount, gasLimit: 500000 }
   );
 
   const receipt = await liquidityTx.wait();
