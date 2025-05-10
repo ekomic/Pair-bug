@@ -13,7 +13,8 @@ async function main() {
   console.log("Removing liquidity with:", signer.address);
 
   const lpToken = await ethers.getContractAt("IERC20", pairAddress, signer);
-  const lpBalance = await lpToken.balanceOf(signer.address);
+  const lpBalance1 = await lpToken.balanceOf(signer.address);
+  const lpBalance = (lpBalance1 * BigInt(slippageTolerance)) / 10000n;
   const lpTotalSupply = await lpToken.totalSupply();
 
   if (lpBalance === 0n) throw new Error("No LP tokens to remove");
