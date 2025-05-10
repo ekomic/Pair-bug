@@ -6,7 +6,7 @@ async function cancelPendingTx() {
   const tx = {
     to: await signer.getAddress(),
     value: 0,
-    nonce: 23,
+    nonce: 29,
     gasLimit: 21000,
     gasPrice: ethers.parseUnits("0.1", "gwei"), // Higher than the original tx
   };
