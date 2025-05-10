@@ -331,10 +331,6 @@ contract DoNotBuy is IERC20Extended, Ownable, ReentrancyGuard {
         uint256 _liquidity,
         uint256 _marketing,
         uint256 _rewards,
-        uint256 _ \n    function setStructure(
-        uint256 _liquidity,
-        uint256 _marketing,
-        uint256 _rewards,
         uint256 _development,
         uint256 _total,
         uint256 _sell,
