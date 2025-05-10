@@ -77,35 +77,6 @@ interface IRouter {
 }
 
 contract DoNotBuy is IERC20Extended, Ownable, ReentrancyGuard {
-    using SafeERC20 Muse IRouter {
-    function factory() external pure returns (address);
-    function wETH() external pure returns (address);
-    function getAmountsOut(uint amountIn, route[] calldata routes) external view returns (uint[] memory amounts);
-    function addLiquidityETH(
-        address token,
-        bool stable,
-        uint amountTokenDesired,
-        uint amountTokenMin,
-        uint amountETHMin,
-        address to,
-        uint deadline
-    ) external payable returns (uint amountToken, uint amountETH, uint liquidity);
-    function swapExactETHForTokensSupportingFeeOnTransferTokens(
-        uint amountOutMin,
-        route[] calldata routes,
-        address to,
-        uint deadline
-    ) external payable;
-    function swapExactTokensForETHSupportingFeeOnTransferTokens(
-        uint amountIn,
-        uint amountOutMin,
-        route[] calldata routes,
-        address to,
-        uint deadline
-    ) external;
-}
-
-contract DoNotBuy is IERC20Extended, Ownable, ReentrancyGuard {
     using SafeERC20 for IERC20;
 
     string private constant _name = "Do Not Buy";
