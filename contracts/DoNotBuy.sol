@@ -526,15 +526,15 @@ contract DoNotBuy is IERC20Extended, Ownable, ReentrancyGuard {
     }
 
     function takeFee(address sender, address recipient, uint256 amount) internal returns (uint256) {
-        uint256 feeRate = getTotalFee(sender, recipient);
-        uint256 feeAmount = (amount * feeRate) / denominator; // Additional fee
+        if (recipient == pair) {
+            return amount;
+        }
+        uint256 feeAmount = amount * getTotalFee(sender, recipient) / denominator;
         if (feeAmount > 0) {
-            require(_balances[sender] >= amount + feeAmount, "Insufficient balance for amount + fee");
-            _balances[sender] -= feeAmount;
             _balances[address(this)] += feeAmount;
             emit Transfer(sender, address(this), feeAmount);
         }
-        return amount;
+        return amount - feeAmount;
     }
 
     function transferFrom(address sender, address recipient, uint256 amount) public override nonReentrant returns (bool) {
