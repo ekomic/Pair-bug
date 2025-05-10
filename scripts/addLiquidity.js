@@ -8,7 +8,7 @@ async function main() {
   const liquidityReceiver = "0xd53686b4298Ac78B1d182E95FeAC1A4DD1D780bD"; // LP token recipient
   const tokenAmount = ethers.parseUnits("4000000", 18); // 4,000,000 DNB
   const ethAmount = ethers.parseUnits("0.002256", 18); // 0.002256 ETH
-  const slippageTolerance = 1000; // 95% as per contract
+  const slippageTolerance = 9950; // 95% as per contract
   const deadline = Math.floor(Date.now() / 1000) + 10 * 60; // 30 minutes from now
 
   // Get signer (account)
@@ -66,7 +66,7 @@ async function main() {
     amountETHMin,
     signer.address, // LP tokens to liquidity_receiver
     deadline,
-    { value: ethAmount, gasLimit: 500000 }
+    { value: ethAmount, gasLimit: 200000 }
   );
 
   const receipt = await liquidityTx.wait();
