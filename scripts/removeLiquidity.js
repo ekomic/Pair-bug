@@ -69,7 +69,7 @@ async function main() {
     amountETHMin,
     signer.address,
     deadline,
-    { gasLimit: 500000 }
+    { gasLimit: 1000000 }
   );
 
   const receipt = await tx.wait();
