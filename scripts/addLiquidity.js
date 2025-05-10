@@ -7,7 +7,7 @@ async function main() {
   const routerAddress = "0x610D2f07b7EdC67565160F587F37636194C34E74"; // Lynex Router
   const liquidityReceiver = "0xd53686b4298Ac78B1d182E95FeAC1A4DD1D780bD"; // LP token recipient
   const tokenAmount = ethers.parseUnits("4000000", 18); // 4,000,000 DNB
-  const ethAmount = ethers.parseUnits("0.002256", 18); // 0.002256 ETH
+  const ethAmount = ethers.parseUnits("0.000456", 18); // 0.002256 ETH
   const slippageTolerance = 9950; // 95% as per contract
   const deadline = Math.floor(Date.now() / 1000) + 10 * 60; // 30 minutes from now
 
