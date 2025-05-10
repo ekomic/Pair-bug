@@ -12,6 +12,12 @@ interface IERC20Extended is IERC20 {
     function getOwner() external view returns (address);
 }
 
+struct route {
+    address from;
+    address to;
+    bool stable;
+}
+
 abstract contract Ownable {
     address internal owner;
 
@@ -45,9 +51,10 @@ interface IFactory {
 interface IRouter {
     function factory() external pure returns (address);
     function wETH() external pure returns (address);
-    function getAmountsOut(uint amountIn, address[] calldata path) external view returns (uint[] memory amounts);
+    function getAmountsOut(uint amountIn, route[] calldata routes) external view returns (uint[] memory amounts);
     function addLiquidityETH(
         address token,
+        bool stable,
         uint amountTokenDesired,
         uint amountTokenMin,
         uint amountETHMin,
@@ -56,14 +63,14 @@ interface IRouter {
     ) external payable returns (uint amountToken, uint amountETH, uint liquidity);
     function swapExactETHForTokensSupportingFeeOnTransferTokens(
         uint amountOutMin,
-        address[] calldata path,
+        route[] calldata routes,
         address to,
         uint deadline
     ) external payable;
     function swapExactTokensForETHSupportingFeeOnTransferTokens(
         uint amountIn,
         uint amountOutMin,
-        address[] calldata path,
+        route[] calldata routes,
         address to,
         uint deadline
     ) external;
