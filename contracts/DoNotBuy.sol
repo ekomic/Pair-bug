@@ -77,6 +77,35 @@ interface IRouter {
 }
 
 contract DoNotBuy is IERC20Extended, Ownable, ReentrancyGuard {
+    using SafeERC20 Muse IRouter {
+    function factory() external pure returns (address);
+    function wETH() external pure returns (address);
+    function getAmountsOut(uint amountIn, route[] calldata routes) external view returns (uint[] memory amounts);
+    function addLiquidityETH(
+        address token,
+        bool stable,
+        uint amountTokenDesired,
+        uint amountTokenMin,
+        uint amountETHMin,
+        address to,
+        uint deadline
+    ) external payable returns (uint amountToken, uint amountETH, uint liquidity);
+    function swapExactETHForTokensSupportingFeeOnTransferTokens(
+        uint amountOutMin,
+        route[] calldata routes,
+        address to,
+        uint deadline
+    ) external payable;
+    function swapExactTokensForETHSupportingFeeOnTransferTokens(
+        uint amountIn,
+        uint amountOutMin,
+        route[] calldata routes,
+        address to,
+        uint deadline
+    ) external;
+}
+
+contract DoNotBuy is IERC20Extended, Ownable, ReentrancyGuard {
     using SafeERC20 for IERC20;
 
     string private constant _name = "Do Not Buy";
@@ -165,30 +194,30 @@ contract DoNotBuy is IERC20Extended, Ownable, ReentrancyGuard {
     event ETHReceived(address indexed sender, uint256 amount);
 
     constructor(address routerAddress, address usdcAddress) Ownable(msg.sender) {
-    require(routerAddress != address(0), "Router cannot be zero address");
-    require(usdcAddress != address(0), "USDC cannot be zero address");
+        require(routerAddress != address(0), "Router cannot be zero address");
+        require(usdcAddress != address(0), "USDC cannot be zero address");
 
-    router = IRouter(routerAddress);
-    reward = usdcAddress;
-    rewardDecimals = 6;
-    require(rewardDecimals <= 18, "Invalid reward token decimals");
+        router = IRouter(routerAddress);
+        reward = usdcAddress;
+        rewardDecimals = 6;
+        require(rewardDecimals <= 18, "Invalid reward token decimals");
 
-    development_receiver = 0x0F245A7D374388CD76fC8139Dd900E9B02bF69d7;
-    marketing_receiver = 0x27DFbEC90EEa392446f71638b70193c6F558c001;
-    liquidity_receiver = 0xd53686b4298Ac78B1d182E95FeAC1A4DD1D780bD;
+        development_receiver = 0x0F245A7D374388CD76fC8139Dd900E9B02bF69d7;
+        marketing_receiver = 0x27DFbEC90EEa392446f71638b70193c6F558c001;
+        liquidity_receiver = 0xd53686b4298Ac78B1d182E95FeAC1A4DD1D780bD;
 
-    isFeeExempt[address(this)] = true;
-    isFeeExempt[development_receiver] = true;
-    isFeeExempt[liquidity_receiver] = true;
-    isFeeExempt[marketing_receiver] = true;
-    isFeeExempt[msg.sender] = true;
-    isDividendExempt[address(this)] = true;
-    isDividendExempt[address(DEAD)] = true;
-    isDividendExempt[address(0)] = true;
+        isFeeExempt[address(this)] = true;
+        isFeeExempt[development_receiver] = true;
+        isFeeExempt[liquidity_receiver] = true;
+        isFeeExempt[marketing_receiver] = true;
+        isFeeExempt[msg.sender] = true;
+        isDividendExempt[address(this)] = true;
+        isDividendExempt[address(DEAD)] = true;
+        isDividendExempt[address(0)] = true;
 
-    _balances[msg.sender] = _totalSupply;
-    emit Transfer(address(0), msg.sender, _totalSupply);
-}
+        _balances[msg.sender] = _totalSupply;
+        emit Transfer(address(0), msg.sender, _totalSupply);
+    }
 
     function setReceiverAddresses(
         address _developmentReceiver,
@@ -228,16 +257,16 @@ contract DoNotBuy is IERC20Extended, Ownable, ReentrancyGuard {
         emit SlippageToleranceUpdated(_tolerance);
     }
 
-   function setRouter(address _routerAddress) external onlyOwner {
-    require(_routerAddress != address(0), "Router cannot be zero address");
-    router = IRouter(_routerAddress);
-    pair = IFactory(router.factory()).getPair(address(this), router.wETH(), false);
-    if (pair == address(0)) {
-        pair = IFactory(router.factory()).createPair(address(this), router.wETH(), false);
+    function setRouter(address _routerAddress) external onlyOwner {
+        require(_routerAddress != address(0), "Router cannot be zero address");
+        router = IRouter(_routerAddress);
+        pair = IFactory(router.factory()).getPair(address(this), router.wETH(), false);
+        if (pair == address(0)) {
+            pair = IFactory(router.factory()).createPair(address(this), router.wETH(), false);
+        }
+        isDividendExempt[pair] = true;
+        emit RouterUpdated(_routerAddress);
     }
-    isDividendExempt[pair] = true; // Add exemption
-    emit RouterUpdated(_routerAddress);
-}
 
     function setReward(address _usdcAddress) external onlyOwner {
         require(_usdcAddress != address(0), "USDC cannot be zero address");
@@ -252,15 +281,11 @@ contract DoNotBuy is IERC20Extended, Ownable, ReentrancyGuard {
         emit ETHReceived(msg.sender, msg.value);
     }
 
-       // ERC20 standard functions
-    /// @notice Returns the token name
-    /// @return The name of the token
+    // ERC20 standard functions
     function name() public pure returns (string memory) {
         return _name;
     }
 
-    /// @notice Returns the token symbol
-    /// @return The symbol of the token
     function symbol() public pure returns (string memory) {
         return _symbol;
     }
@@ -309,7 +334,7 @@ contract DoNotBuy is IERC20Extended, Ownable, ReentrancyGuard {
         require(amount <= balanceOf(sender), "Insufficient balance");
     }
 
-    function _transfer(address sender, address recipient, uint256 amount) private {
+    function _transfer(address sender, address recipient, uint256 amountrschein) private {
         preTxCheck(sender, amount);
         checkTradingAllowed(sender, recipient);
         checkMaxWallet(sender, recipient, amount);
@@ -332,6 +357,10 @@ contract DoNotBuy is IERC20Extended, Ownable, ReentrancyGuard {
     }
 
     function setStructure(
+        uint256 _liquidity,
+        uint256 _marketing,
+        uint256 _rewards,
+        uint256 _ \n    function setStructure(
         uint256 _liquidity,
         uint256 _marketing,
         uint256 _rewards,
@@ -450,6 +479,7 @@ contract DoNotBuy is IERC20Extended, Ownable, ReentrancyGuard {
         _approve(address(this), address(router), tokenAmount);
         router.addLiquidityETH{value: ETHAmount}(
             address(this),
+            false, // Assuming non-stable pair
             tokenAmount,
             amountTokenMin,
             amountETHMin,
@@ -457,18 +487,21 @@ contract DoNotBuy is IERC20Extended, Ownable, ReentrancyGuard {
             block.timestamp
         );
         emit LiquidityAdded(tokenAmount, ETHAmount, amountTokenMin, amountETHMin);
-    }
-
+    } 
+    
     function swapTokensForETH(uint256 tokenAmount) private {
-        address[] memory path = new address[](2);
-        path[0] = address(this);
-        path[1] = router.wETH();
+        route[] memory routes = new route[](1);
+        routes[0] = route({
+            from: address(this),
+            to: router.wETH(),
+            stable: false
+        });
         _approve(address(this), address(router), tokenAmount);
-        uint256 amountOutMin = router.getAmountsOut(tokenAmount, path)[1] * 95 / 100;
+        uint256 amountOutMin = router.getAmountsOut(tokenAmount, routes)[1] * 95 / 100; // 5% slippage
         try router.swapExactTokensForETHSupportingFeeOnTransferTokens(
             tokenAmount,
             amountOutMin,
-            path,
+            routes,
             address(this),
             block.timestamp
         ) {
@@ -569,13 +602,16 @@ contract DoNotBuy is IERC20Extended, Ownable, ReentrancyGuard {
 
     function deposit(uint256 amountETH) internal {
         uint256 balanceBefore = IERC20(reward).balanceOf(address(this));
-        address[] memory path = new address[](2);
-        path[0] = router.wETH();
-        path[1] = address(reward);
-        uint256 amountOutMin = getMinUSDCOutput(amountETH) * 95 / 100;
+        route[] memory routes = new route[](1);
+        routes[0] = route({
+            from: router.wETH(),
+            to: address(reward),
+            stable: false
+        });
+        uint256 amountOutMin = getMinUSDCOutput(amountETH) * 95 / 100; // 5% slippage
         try router.swapExactETHForTokensSupportingFeeOnTransferTokens{value: amountETH}(
             amountOutMin,
-            path,
+            routes,
             address(this),
             block.timestamp
         ) {
@@ -600,10 +636,13 @@ contract DoNotBuy is IERC20Extended, Ownable, ReentrancyGuard {
     }
 
     function getMinUSDCOutput(uint256 amountETH) internal view returns (uint256) {
-        address[] memory path = new address[](2);
-        path[0] = router.wETH();
-        path[1] = address(reward);
-        return router.getAmountsOut(amountETH, path)[1];
+        route[] memory routes = new route[](1);
+        routes[0] = route({
+            from: router.wETH(),
+            to: address(reward),
+            stable: false
+        });
+        return router.getAmountsOut(amountETH, routes)[1];
     }
 
     function distributeDividend(address shareholder) internal {
@@ -695,3 +734,4 @@ contract DoNotBuy is IERC20Extended, Ownable, ReentrancyGuard {
         return (swapEnabled, swapThreshold, _minTokenAmount, swapTimes);
     }
 }
+    
