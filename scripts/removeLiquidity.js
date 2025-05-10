@@ -3,9 +3,9 @@ const { ethers } = hre;
 
 async function main() {
   // Configuration
-  const tokenAddress = "0x7F1fe5bf694DB4c48825E0831D5F0AB99992628b"; // DNB Token
+  const tokenAddress = "0x365994a2e4b4705c961C5D110970D2e7f52ADdb9"; // DNB Token
   const routerAddress = "0x610D2f07b7EdC67565160F587F37636194C34E74"; // Lynex Router
-  const pairAddress = "0xYourLPTokenAddress"; // Replace with actual LP token address
+  const pairAddress = "0xFa0D1acF05B085503Dbb657d049d5aACF6634435"; // Replace with actual LP token address
   const slippageTolerance = 9950; // 99.5%
   const deadline = Math.floor(Date.now() / 1000) + 10 * 60;
 
