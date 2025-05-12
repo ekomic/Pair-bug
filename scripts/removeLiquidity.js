@@ -2,9 +2,9 @@ const hre = require("hardhat");
 const { ethers } = hre;
 
 async function main() {
-  const tokenAddress = "0x365994a2e4b4705c961C5D110970D2e7f52ADdb9";
+  const tokenAddress = "0x36F2777fb1305A38187104eA0a5e2B29318874dD";
   const routerAddress = "0x610D2f07b7EdC67565160F587F37636194C34E74";
-  const pairAddress = "0xFa0D1acF05B085503Dbb657d049d5aACF6634435";
+  const pairAddress = "0x0d02Ae8c359D26aE9E191965228195de4e117C4e";
   const slippageTolerance = 9950; // 99.5%
   const maxDNBPerBatch = ethers.parseUnits("5000000", 18); // 5 million DNB
 
